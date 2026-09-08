@@ -19,7 +19,7 @@ The objective of this project was to utilize a domain controller and client virt
 
 <h2>Deployment and Configuration Steps</h2>
 
-To create the test environment for this demonstration, I used 2 virtual machines (DC-1 and Client-1) created here (https://github.com/JMW814/creating-azure-vms)  
+To create the test environment for this demonstration, I'll be referencing 2 virtual machines (DC-1 and Client-1) created here (https://github.com/JMW814/creating-azure-vms)  
  
  Step 1
  
