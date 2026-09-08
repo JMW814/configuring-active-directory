@@ -9,7 +9,7 @@ The objective of this project was to utilize a domain controller and client virt
 - Virtual Machine 2 (Domain Controller/DNS Server)
 - Remote Desktop
 - DNS Manager
-- PowerShell
+- Active Directory
 
 <h2>Operating Systems Used </h2>
 
