@@ -46,9 +46,18 @@ Step 2
  
 Step-3
  
-Now that Active Directory is installed, I want to create my own workplace environment filled with users, groups, and units.
+Now that the domain is active, I logged back in to Client-1 and added it to the domain
+<p>
+<img width="560" height="658" alt="image" src="https://github.com/user-attachments/assets/1ee3a855-f877-46eb-a2ff-714966896a9a" />
 
-i start by creating 4 organizational units for accounting, clients, admins, and employees
+
+</p>
+<p>
+Step-4
+ 
+Now that Active Directory is installed and the client machine is connected to the domain, I want to practice using Active Directory as an administrator by creating my own workplace environment filled with users, groups, and units.
+
+I started by creating 4 organizational units for accounting, clients, admins, and employees
 <p>
 <img width="1269" height="768" alt="image" src="https://github.com/user-attachments/assets/0398331c-f6ec-4334-943b-a53ff2f651e7" />
 
@@ -56,145 +65,27 @@ i start by creating 4 organizational units for accounting, clients, admins, and 
 </p>
 <p>
 
-I created a username and password for it, then made sure its selected inbound ports were set to RDP so I could use Remote Desktop to access it
-
-I then went into the network tab, selected the VNet-AD network I created earlier, touched no other settings, and clicked Create
-
-
-
 </p>
 <br />
+Next, I want to add a bunch of employee accounts to the domain so I can experiment with them. I used this script in PowerShell ISE (https://github.com/joshmadakor1/AD_PS/blob/master/Generate-Names-Create-Users.ps1) to simultaneously create thousands of user accounts for me to use, so I didn't have to create them by hand.
+
 
 <p>
-<img width="1082" height="597" alt="image" src="https://github.com/user-attachments/assets/b8bfbccc-f9bd-40ae-a68f-5172cb51d82a" />
+<img width="1791" height="949" alt="image" src="https://github.com/user-attachments/assets/26420514-6b9d-4e8d-b79a-d5584da7de30" />
 
-
-</p>
-<p>
-Step 4
- 
-Now it's time to create the second virtual machine (domain controller) to use as my DNS server. This VM is using Windows Server 2022, so it has access to Server Manager and can control the DNS server information 
-
- I went into the Virtual machines tab and then clicked create. I selected the Lab-AD resource group, selected the Central US region, named it DC-1, selected Windows Server 2022 as its image, and selected its size as anything with 2vcpus and atleast 8GB ram.
-<p>
-<img width="749" height="787" alt="image" src="https://github.com/user-attachments/assets/f981a825-2f87-4a18-ad49-451d1aa75168" />
-
-
-</p>
-<p>
-Just like the last one, I created a username and password for it, then made sure its selected inbound ports were set to RDP so I could use Remote Desktop to access it
-
-I then went into the network tab, selected the same VNet-AD network, touched no other setting, and clicked create.
-
-
-</p>
-<br />
-
-<p>
-<img width="1082" height="597" alt="image" src="https://github.com/user-attachments/assets/b8bfbccc-f9bd-40ae-a68f-5172cb51d82a" />
 
 </p>
 <p>
 Step 5
- 
-Now I have to set DC-1 as the DNS server for Client 1
-
-To do this is went into the Virtual Machines tab, selected DC-1, scrolled until I identified its public and private IP addresses, and wrote them down. I did the same for Client-1.
-<p>
-<img width="693" height="305" alt="image" src="https://github.com/user-attachments/assets/b229ab17-f76e-449d-8b74-dcc8c26e9ef1" />
-
-</p>
-<p>
- 
- I then went into Client-1 and  selected the Network settings tab, then the DNS Server tab, and clicked Custom. In the custom DNS server, I typed the private IP address of DC-1, so Client-1 now recognizes it as its DNS server.
-
-</p>
-<br />
+Finally I practiced moving users around different security groups, by promoting one of the created users to a domain admin. 
 
 <p>
-<img width="1516" height="701" alt="image" src="https://github.com/user-attachments/assets/be1971a0-23e2-4e28-ada2-f4158f66090e" />
+<img width="1046" height="747" alt="image" src="https://github.com/user-attachments/assets/a9a4d3d3-e1ff-4059-9086-deef8847c313" />
 
-</p>
-<p>
-Step 6 
- 
-Now that my virtual machines are all set up, I can start the DNS testing project.  I move away from Azure and onto my own desktop and open the Remote Desktop application 
-
-I type in the public IP address of Client 1, type in the User and password I created earlier, and enter the VM 
-
-
-</p>
-<br />
-
-<p>
-<img width="611" height="387" alt="image" src="https://github.com/user-attachments/assets/a36d8e7c-15a0-4f83-8244-c93e50d18876" />
-
-</p>
-<p>
-Step 7. 
-
- in the Client 1 VM, I click the Start menu and open the PowerShell application 
-
-In PowerShell, I type “ping mainframe,” but because there was no DNS record associated with “mainframe,” the ping ultimately failed, and I was met with no response.
-</p>
-<br />
-
-<p>
-<img width="811" height="479" alt="(DNS) ping mainframe fail" src="https://github.com/user-attachments/assets/9d4a6f82-0a15-418c-b765-fc05da7bf59a" />
-Step 8
-
-I exit my Client 1 VM and remote desktop into the DC-1 VM. 
-
-I clicked the Start menu, typed Server Manager, entered the application, and went to the DNS tab. I selected the Forward Lookup Zones folder right clicked my mouse and selected “New Host (A or AAAA) to create an A record for mainframe.
-
-In the new host menu, I named it “mainframe” and set the IP address as the private IP of DC-1, so now pinging mainframe will ping DC-1. I clicked Add Host, exited the DC-1 VM, and remote desktoped back into Client-1
-</p>
-<br />
-
-<p>
-<img width="701" height="486" alt="(DNS) adding mainframe to dns server" src="https://github.com/user-attachments/assets/2dfe84eb-d6cf-45f2-adb4-910c5ce68133" />
-</p>
-<p>
-Step-9
- 
-In client 1, I reopened PowerShell to nslookup and ping mainframe again. The nslookup correctly showed mainframe as DC-1's IP address. The ping was also successful, meaning that DNS was now able to resolve mainframe as DC-1’s IP address. 
-
-I then exited client 1 and entered DC-1
-</p>
-<br />
-
-<p>
-<img width="748" height="443" alt="(DNS) mainframe sucess" src="https://github.com/user-attachments/assets/8afa284c-5939-4ed3-b74f-01ae02ec66ff" />
-</p>
-<p>
-Step 10
- 
-In DC-1, I went back into the DNS server manager and right-clicked the A record of mainframe I just created to see its properties and edit the record. I changed the IP address from DC-1's to the IP address of Google's web server (8.8.8.8)  and saved it.
-
-I then switched back over to client 1
-</p>
-<br />
-
-<p>
-<img width="824" height="460" alt="(DNS) changing mainframe to 888" src="https://github.com/user-attachments/assets/c651edcb-fc00-43ef-8277-bee64c7ba542" />
-</p>
-<p>
- Step 11
- 
-In client 1, I opened PowerShell and attempted to ping mainframe again and observed that it still sent a ping to DC-1 even though I changed mainframe to resolve to Google's web server. This is because, in client 1's DNS cache, it still has it saved that mainframe = DC-1
-
-For this to be fix this, I need to clear the DNS cache. To do this, I typed the command ipconfig /flushdns, and it successfully cleared the DNS cache
-
-Once that was done, I pinged mainframe, and this time it correctly sent to Google's web server 
-</p>
-<br />
-
-<p>
-<img width="789" height="497" alt="(DNS) changing mainframe and flushing cache" src="https://github.com/user-attachments/assets/248c2aba-46ce-4d74-8184-58d0de4bf030" />
 
 </p>
 <p>
 </p>
 <br />
 <h2>Conclusion</h2>
-With the help of 2 Virtual Machines, this project demonstrated the complete process of DNS name resolution by failing to find a name, creating an A record, successfully resolving the hostname, changing the record, observing how the DNS cache works, and then clearing the cache to receive the updated DNS information
+I was able to build my intuition for Active Directory by creating a domain controller, connecting a client machine to the domain, and creating a testing foundation in Active Directory.
